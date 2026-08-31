@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Docker named volumes are often created as root. The entrypoint starts as root,
+# fixes ownership on mounted paths, then re-execs itself as the coder user.
+if [[ "$(id -u)" -eq 0 ]] && [[ "${CODER_ENTRYPOINT_DROPPED:-}" != "1" ]]; then
+  echo "Fixing volume permissions for coder user (UID 1000)..."
+  mkdir -p \
+    /home/coder/.local/share/code-server \
+    /home/coder/.config/code-server \
+    /home/coder/workspace \
+    /home/coder/.ssh
+  chown -R coder:coder \
+    /home/coder/.local \
+    /home/coder/.config \
+    /home/coder/workspace \
+    /home/coder/.ssh
+  exec gosu coder env CODER_ENTRYPOINT_DROPPED=1 "$0" "$@"
+fi
+
 EXTENSIONS_FILE="/etc/codeserver/extensions.txt"
 SETTINGS_SOURCE="/etc/codeserver/settings.json"
 SETTINGS_DIR="/home/coder/.local/share/code-server/User"

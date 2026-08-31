@@ -584,6 +584,13 @@ Rebuild the image. pnpm is installed globally in the Dockerfile.
 - Check container health: `GET /healthz` should return `200`
 - Review Coolify deployment logs for startup errors
 
+### Container restart loop — `Permission denied` on `/home/coder/.local/...`
+
+Docker named volumes are often created as **root**. The entrypoint fixes ownership on startup (`chown coder:coder`). If you still see this after updating:
+
+1. **Redeploy** in Coolify to pull the latest image (includes the permission fix)
+2. If it persists, delete the application volumes in Coolify and redeploy (you lose extensions/workspace data)
+
 ### Permission errors on workspace files
 
 The container runs as UID `1000`. Files created on the host with a different UID may cause permission issues. Clone repos inside the container workspace rather than bind-mounting host directories with mismatched permissions.

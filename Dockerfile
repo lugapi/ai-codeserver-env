@@ -67,6 +67,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     gnupg \
+    gosu \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -149,7 +150,9 @@ RUN chmod +x /usr/local/bin/entrypoint.sh \
 # -----------------------------------------------------------------------------
 # Security best practice: the running container should not be root.
 # Coolify and docker-compose both run this container as UID 1000 (coder).
-USER coder
+# Entrypoint runs as root to fix volume permissions, then drops to coder via gosu.
+# Playwright browsers above remain owned by coder (installed in USER coder step).
+USER root
 WORKDIR /home/coder
 
 # -----------------------------------------------------------------------------
