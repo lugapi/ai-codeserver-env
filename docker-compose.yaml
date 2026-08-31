@@ -9,8 +9,12 @@ services:
     expose:
       - "8080"
     environment:
+      # Coolify: routes your domain to container port 8080 (required with expose:)
+      SERVICE_FQDN_CODESERVER_8080: /
       PASSWORD: ${SERVICE_PASSWORD_CODESERVER}
       OPTIONAL_EXTENSION_UPDATE: "false"
+    labels:
+      - traefik.http.services.codeserver.loadbalancer.server.port=8080
     volumes:
       - code-server-data:/home/coder/.local/share/code-server
       - code-server-config:/home/coder/.config/code-server
