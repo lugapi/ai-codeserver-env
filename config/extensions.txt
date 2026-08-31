@@ -1,0 +1,32 @@
+# VS Code extensions installed on first container start.
+# One extension ID per line. Lines starting with # are ignored.
+#
+# How to keep extensions up to date:
+#   1. Edit this file and redeploy (rebuild the image in Coolify).
+#   2. Or set OPTIONAL_EXTENSION_UPDATE=true to refresh on every start.
+#
+# Find extension IDs: https://open-vsx.org/ or the VS Code Marketplace.
+
+# --- Core development ---
+esbenp.prettier-vscode
+dbaeumer.vscode-eslint
+eamodio.gitlens
+usernamehw.errorlens
+
+# --- TypeScript / JavaScript ---
+ms-vscode.vscode-typescript-next
+
+# --- Web ---
+bradlc.vscode-tailwindcss
+formulahendry.auto-rename-tag
+christian-kohler.path-intellisense
+
+# --- GitHub ---
+GitHub.vscode-pull-request-github
+
+# --- AI ---
+anthropic.claude-code
+
+# --- Utilities ---
+EditorConfig.EditorConfig
+mikestead.dotenv

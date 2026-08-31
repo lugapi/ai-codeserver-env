@@ -1,0 +1,101 @@
+# =============================================================================
+# ai-codeserver-env — docker-compose.yml
+# =============================================================================
+#
+# Purpose:
+#   Primary deployment manifest for Coolify v4+ AND the base for local testing.
+#
+# Coolify (recommended):
+#   Create an **Application** → **Public Repository** → Build Pack: **Docker Compose**
+#   Coolify reads this file and automatically:
+#     - Builds the image from ./Dockerfile (via the `build:` directive below)
+#     - Creates the named volumes defined at the bottom of this file
+#     - Generates a secure PASSWORD via the magic variable SERVICE_PASSWORD_CODESERVER
+#     - Routes HTTPS traffic through Traefik to port 8080 (via `expose:`)
+#
+#   You do NOT need to manually configure Persistent Storage or generate openssl passwords.
+#
+# Local testing:
+#   This file alone does not expose a host port or set a local password.
+#   Use the local override file:
+#     docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#
+# Magic environment variables (Coolify only):
+#   https://coolify.io/docs/knowledge-base/docker/compose#coolifys-magic-environment-variables
+#
+#   SERVICE_PASSWORD_CODESERVER → auto-generated, persisted across redeploys
+#   Mapped to PASSWORD because code-server expects that exact variable name.
+# =============================================================================
+
+services:
+
+  code-server:
+
+    # Coolify clones the repo and runs `docker build` from this context.
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    # -------------------------------------------------------------------------
+    # Networking — expose (NOT ports) for Coolify's reverse proxy
+    # -------------------------------------------------------------------------
+    # `expose` declares the internal port without binding it on the host.
+    # Coolify's Traefik proxy routes your domain → container:8080.
+    #
+    # Do NOT add `ports:` here — that bypasses the proxy and can cause conflicts.
+    # For local access, use docker-compose.local.yml which adds a port mapping.
+    expose:
+      - "8080"
+
+    # -------------------------------------------------------------------------
+    # Environment variables
+    # -------------------------------------------------------------------------
+    # PASSWORD:
+    #   On Coolify → auto-generated from SERVICE_PASSWORD_CODESERVER (magic var).
+    #   On local   → overridden by docker-compose.local.yml using PASSWORD from .env
+    #
+    # OPTIONAL_EXTENSION_UPDATE:
+    #   "true"  → re-install extensions on every container start
+    #   "false" → install only on first start (default, faster restarts)
+    environment:
+      PASSWORD: ${SERVICE_PASSWORD_CODESERVER}
+      OPTIONAL_EXTENSION_UPDATE: ${OPTIONAL_EXTENSION_UPDATE:-false}
+
+    # -------------------------------------------------------------------------
+    # Persistent volumes
+    # -------------------------------------------------------------------------
+    # Named volumes survive redeploys. Coolify creates and manages these
+    # automatically from this compose file — no manual "Persistent Storage" UI setup.
+    #
+    #   code-server-data   → VS Code extensions, user settings, extension state
+    #   code-server-config → code-server server config (config.yaml)
+    #   workspace          → your git repos and projects
+    #   coder-ssh          → SSH keys for GitHub (revocable deploy keys)
+    volumes:
+      - code-server-data:/home/coder/.local/share/code-server
+      - code-server-config:/home/coder/.config/code-server
+      - workspace:/home/coder/workspace
+      - coder-ssh:/home/coder/.ssh
+
+    # -------------------------------------------------------------------------
+    # Health check
+    # -------------------------------------------------------------------------
+    # Coolify and Docker use this to know when code-server is ready.
+    # The 40s start_period accounts for first-run extension installation.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# =============================================================================
+# Named volumes — created automatically by Coolify on first deploy
+# =============================================================================
+volumes:
+  code-server-data:
+  code-server-config:
+  workspace:
+  coder-ssh:

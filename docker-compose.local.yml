@@ -1,0 +1,24 @@
+# =============================================================================
+# docker-compose.local.yml — LOCAL DEVELOPMENT OVERRIDE
+# =============================================================================
+#
+# This file is NOT used by Coolify.
+# Coolify deploys with:  docker compose -f docker-compose.yml
+# (override files are not merged unless explicitly passed)
+#
+# Usage:
+#   cp .env.example .env          # set PASSWORD
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#   open http://localhost:8080
+#
+# What this override adds:
+#   - Host port mapping (8080:8080) so you can access code-server in a browser
+#   - PASSWORD from your local .env file (replaces Coolify's magic variable)
+# =============================================================================
+
+services:
+  code-server:
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      PASSWORD: ${PASSWORD:?Set PASSWORD in .env}

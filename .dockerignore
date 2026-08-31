@@ -1,0 +1,14 @@
+# Exclude files from the Docker build context (faster builds, smaller context).
+# Coolify sends the git repository as build context — these files are not needed
+# inside the image.
+
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+README.md
+LICENSE
+coolify/
+docker-compose.yml
+*.md
