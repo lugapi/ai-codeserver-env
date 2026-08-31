@@ -1,0 +1,55 @@
+# =============================================================================
+# ai-codeserver-env — docker-compose.yaml
+# =============================================================================
+#
+# Coolify v4 defaults to this filename (.yaml, not .yml).
+#
+# Purpose:
+#   Primary deployment manifest for Coolify v4+ AND the base for local testing.
+#
+# Coolify (recommended):
+#   Application → Public Repository → Build Pack: Docker Compose
+#   Docker Compose Location: /docker-compose.yaml  (Coolify default)
+#
+# Local testing:
+#   docker compose -f docker-compose.yaml -f docker-compose.local.yml up -d --build
+#
+# Magic environment variables (Coolify only):
+#   SERVICE_PASSWORD_CODESERVER → auto-generated, injected as PASSWORD
+# =============================================================================
+
+services:
+
+  code-server:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    expose:
+      - "8080"
+
+    environment:
+      PASSWORD: ${SERVICE_PASSWORD_CODESERVER}
+      OPTIONAL_EXTENSION_UPDATE: ${OPTIONAL_EXTENSION_UPDATE:-false}
+
+    volumes:
+      - code-server-data:/home/coder/.local/share/code-server
+      - code-server-config:/home/coder/.config/code-server
+      - workspace:/home/coder/workspace
+      - coder-ssh:/home/coder/.ssh
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  code-server-data:
+  code-server-config:
+  workspace:
+  coder-ssh:

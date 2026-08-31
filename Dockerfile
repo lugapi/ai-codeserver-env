@@ -7,7 +7,7 @@
 #   Node.js LTS, pnpm, Git, GitHub CLI, Claude Code, and Playwright.
 #
 # Designed for:
-#   - Local testing via docker-compose.yml
+#   - Local testing via docker-compose.yaml
 #   - Production deployment on Coolify v4+ (build pack: Dockerfile)
 #
 # Base image:
@@ -26,7 +26,7 @@
 #   docker build -t ai-codeserver-env .
 #
 # Coolify:
-#   Build Pack  → Docker Compose (recommended) — reads docker-compose.yml
+#   Build Pack  → Docker Compose (recommended) — reads docker-compose.yaml
 #   Alternative → Dockerfile build pack (manual volumes + password)
 #   Port        → 8080 (via expose: in compose, or Ports Exposes in UI)
 # =============================================================================

@@ -19,10 +19,10 @@ https://github.com/lugapi/ai-codeserver-env
 | Resource type | **Application** → Public Repository |
 | Build Pack | `Docker Compose` |
 | Base Directory | `/` |
-| Docker Compose Location | `/docker-compose.yml` |
+| Docker Compose Location | `/docker-compose.yaml` |
 | Domains | `https://code.yourdomain.com` |
 
-### Auto-configured from docker-compose.yml
+### Auto-configured from docker-compose.yaml
 
 | What | How |
 |------|-----|
@@ -51,7 +51,7 @@ Then manually set `PASSWORD` and add 3 persistent volume mounts. See [README](..
 
 ```bash
 cp .env.example .env
-docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+docker compose -f docker-compose.yaml -f docker-compose.local.yml up -d --build
 ```
 
 ## Official Coolify docs

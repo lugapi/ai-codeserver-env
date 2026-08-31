@@ -3,12 +3,12 @@
 # =============================================================================
 #
 # This file is NOT used by Coolify.
-# Coolify deploys with:  docker compose -f docker-compose.yml
+# Coolify deploys with:  docker compose -f docker-compose.yaml
 # (override files are not merged unless explicitly passed)
 #
 # Usage:
 #   cp .env.example .env          # set PASSWORD
-#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#   docker compose -f docker-compose.yaml -f docker-compose.local.yml up -d --build
 #   open http://localhost:8080
 #
 # What this override adds:
